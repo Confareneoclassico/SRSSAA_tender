@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import chaospy as cp
+import random
+from scipy import stats
+%matplotlib inline
+
+#Import the relevant excel file
+df = pd.read_excel('C:/Users/Samuele/Dropbox/ECGC_Barcelona/1.Projects/02-JRC/Work/iTFA best estimate_corrected_20062017.xlsx',\
+sheetname='Sheet3', parse_cols = 'A:LY', header=None, index_col=0)
+
+#Format the notebook by adopting the relevant multindex framework
+df.columns=pd.MultiIndex.from_arrays(df[:3].values, names=['Country','Sex','Item'])
+
+# Narrow down to the cells that one will be actually working on
+df2 = df[3:20]
+df3 = df2.T
+grouped = df3.groupby('Item')
+
+# This way it is possible to assess the average of the figures proposed
+df4 = df3.groupby('Item').agg(lambda x: x.sum()/x.count())
+
+# The worksheet contains the figures taken out DK, HU, PL and SK as the data provided for these countries are
+# already to be intended as iTFA. We want to retreive some TFA figures for the various EU countries with this 
+#operation
+
+dg = pd.read_excel('C:/Users/Samuele/Dropbox/ECGC_Barcelona/1.Projects/02-JRC/Work/iTFA best estimate_corrected_20062017.xlsx',\
+sheetname='Cut', parse_cols = 'A:KC', header=None, index_col=0)
+
+dg.columns=pd.MultiIndex.from_arrays(dg[:3].values, names=['Country','Sex','Item'])
+
+# Narrow down to the cells that one will be actually working on
+dg2 = dg[3:20]
+dg3 = dg2.T
+g = dg3.groupby(['Sex','Item'])
+
+for item, frame in df['Column2'].iteritems():
+    if pd.notnull(frame):
+    
+df3.sort_index(inplace=True)
+idx = pd.IndexSlice
+df.loc[idx[:,'M'],:]
