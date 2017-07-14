@@ -41,3 +41,4 @@ for item, frame in df['Column2'].iteritems():
 df3.sort_index(inplace=True)
 idx = pd.IndexSlice
 df.loc[idx[:,'M'],:]
+df3.loc(axis=0)[:,:,['iTFA_share']]
