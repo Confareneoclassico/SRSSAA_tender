@@ -35,10 +35,27 @@ dg2 = dg[3:20]
 dg3 = dg2.T
 g = dg3.groupby(['Sex','Item'])
 
-for item, frame in df['Column2'].iteritems():
-    if pd.notnull(frame):
-    
-df3.sort_index(inplace=True)
-idx = pd.IndexSlice
-df.loc[idx[:,'M'],:]
-df3.loc(axis=0)[:,:,['iTFA_share']]
+#get the average figures for the different quantities and fill the NaN voids:
+b = g.get_group(('F', 'TFA'))
+b2 = b.fillna(b.mean())
+b3 = g.get_group(('M', 'TFA'))
+b4 = b4.fillna(b4.mean())
+b5 = b2.sort_index()
+b6 = b4.sort_index()
+b7 = g.get_group(('F', 'iTFA_share'))
+b8 = b7.fillna(b7.mean())
+b9 = g.get_group(('M', 'iTFA_share'))
+b10 = b9.fillna(b9.mean())
+b11 = b9.sort_index()
+b12 = b10.sort_index()
+frame=(b5, b6, b11, b12)
+result = pd.concat(frame)
+rIndex = pd.MultiIndex(levels=[['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'EE', 'EL', 'ES', 'FI', 'FR', 'HR', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PT', 'RO', 'SE', 'SL', 'UK'], ['F', 'M'], ['iTFA_intake']], \
+labels=[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, \
+9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\
+, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], names=['Country', 'Sex', 'Item'])
+r = pd.DataFrame([], index=rIndex)
+results2 = result.append(r)
+
+#append everything and then take the index out and reintroduce the index when you are done
