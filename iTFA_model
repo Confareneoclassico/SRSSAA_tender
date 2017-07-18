@@ -39,17 +39,54 @@ g = dg3.groupby(['Sex','Item'])
 b = g.get_group(('F', 'TFA'))
 b2 = b.fillna(b.mean())
 b3 = g.get_group(('M', 'TFA'))
-b4 = b4.fillna(b4.mean())
+b4 = b3.fillna(b3.mean())
 b5 = b2.sort_index()
 b6 = b4.sort_index()
 b7 = g.get_group(('F', 'iTFA_share'))
 b8 = b7.fillna(b7.mean())
 b9 = g.get_group(('M', 'iTFA_share'))
 b10 = b9.fillna(b9.mean())
-b11 = b9.sort_index()
+b11 = b8.sort_index()
 b12 = b10.sort_index()
-frame=(b5, b6, b11, b12)
+b13 = g.get_group(('F', 'STD'))
+b14 = b13.fillna(b13.mean())
+b15 = g.get_group(('M', 'STD'))
+b16 = b15.fillna(b15.mean())
+b17 = b14.sort_index()
+b18 = b16.sort_index()
+frame=(b5, b6, b11, b12, b17, b18)
 result = pd.concat(frame)
+result = result.reset_index(drop=True)
+result = result.T.reset_index(drop = True).T
+a= pd.DataFrame(np.zeros(shape=(96,17)))
+result2 = result.append(a)
+result2 = result2.reset_index(drop = True)
+for col in result2.columns:
+    for row in range (0,48):
+        result2[col][row+144] = result2[col][row] * result2[col][row+48]
+    for row in range (96,144):
+        result2[col][row+96] = result2[col][row] * result2[col][row-48]
+
+#normalize the figures for the population
+result3 = result2.iloc[144:240]
+b19 = g.get_group(('F', 'Population'))
+b20 = g.get_group(('M', 'Population'))
+b21 = b19.sort_index()
+b22 = b20.sort_index()
+b23 = b21.reset_index(drop=True)
+b24 = b22.reset_index(drop=True)
+b25 = b23.T.reset_index(drop=True).T
+b26 = b24.T.reset_index(drop=True).T
+result4 = result3.reset_index(drop=True)
+result5 = result4.append(b25)
+result6 = result5.append(b26)
+result7 = result6.reset_index(drop=True)
+a2= pd.DataFrame(np.zeros(shape=(4,17)), index = (144, 145, 146, 147))
+result8 = result7.append(a2)
+for col in result2.columns:
+    for row in range(0,24):
+        result8[col][144] = sum(result8[col][row] * result8[col][row+96])/sum(result8[col][row+96])
+
 rIndex = pd.MultiIndex(levels=[['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'EE', 'EL', 'ES', 'FI', 'FR', 'HR', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PT', 'RO', 'SE', 'SL', 'UK'], ['F', 'M'], ['iTFA_intake']], \
 labels=[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, \
 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
