@@ -16,6 +16,333 @@ df.columns=pd.MultiIndex.from_arrays(df[:3].values, names=['Country','Sex','Item
 # Narrow down to the cells that one will be actually working on
 df2 = df[3:20]
 df3 = df2.T
+df4 = df3.sort_index()
+
+df4.loc[(slice(None),slice(None), ['iTFA_share']),:].mean()
+
+# #1 mean
+df5 = df4.loc[(slice(None),slice(None), ['iTFA_share']),:].fillna(df4.loc[(slice(None),slice(None), ['iTFA_share']),:].mean())
+df6 = df5.mean()
+df7 = df4.loc[(slice(None),slice('F'), ['TFA']),:].fillna(df4.loc[(slice(None),slice('F'), ['TFA']),:].mean())
+df8 = df7.mean()
+df9 = df4.loc[(slice(None),slice('M'), ['TFA']),:].fillna(df4.loc[(slice(None),slice('M'), ['TFA']),:].mean())
+df10 = df9.mean()
+df11 = df4.loc[(slice(None),slice('F'), ['STD']),:].fillna(df4.loc[(slice(None),slice('F'), ['STD']),:].mean())
+df12 = df11.mean()
+df13 = df4.loc[(slice(None),slice('M'), ['STD']),:].fillna(df4.loc[(slice(None),slice('M'), ['STD']),:].mean())
+df14 = df10.mean()
+
+df5d = df5.reset_index(level=2, drop=True)
+df7d = df5.reset_index(level=2, drop=True)
+df9d = df5.reset_index(level=2, drop=True)
+df11d = df5.reset_index(level=2, drop=True)
+df13d = df5.reset_index(level=2, drop=True)
+df15d = df7d*df5d
+df17d = df9d*df5d
+df19d = df11d*df5d
+df21d = df13d*df5d
+df15d['Item']='iTFA_int'
+df17d['Item']='iTFA_int'
+df19d['Item']='STD_iTFA'
+df21d['Item']='STD_iTFA'
+df15d.set_index('Item', append=True, inplace=True)
+df17d.set_index('Item', append=True, inplace=True)
+df19d.set_index('Item', append=True, inplace=True)
+df21d.set_index('Item', append=True, inplace=True)
+df15 = df4.loc[(slice(None),slice('F'), ['iTFA_int']),:].fillna(df15d)
+df17 = df4.loc[(slice(None),slice('M'), ['iTFA_int']),:].fillna(df17d)
+df19 = df4.loc[(slice(None),slice('F'), ['STD_iTFA']),:].fillna(df19d)
+df21 = df4.loc[(slice(None),slice('M'), ['STD_iTFA']),:].fillna(df21d)
+df16=df15.mean()
+df16b = df16.to_frame('F_iTFA_intake')
+df18=df17.mean()
+df18b = df18.to_frame('M_iTFA_intake')
+df20=df19.mean()
+df20b = df20.to_frame('F_STD_iTFA_intake')
+df22=df21.mean()
+df22b = df22.to_frame('M_STD_iTFA_intake')
+frame = (df16b.T, df18b.T, df20b.T, df22b.T)
+mean = pd.concat(frame)
+meanr = mean.round(2)
+
+# # 2 median
+df5a = df4.loc[(slice(None),slice(None), ['iTFA_share']),:].fillna(df4.loc[(slice(None),slice(None), ['iTFA_share']),:].median())
+df7a = df4.loc[(slice(None),slice('F'), ['TFA']),:].fillna(df4.loc[(slice(None),slice('F'), ['TFA']),:].median())
+df9a = df4.loc[(slice(None),slice('M'), ['TFA']),:].fillna(df4.loc[(slice(None),slice('M'), ['TFA']),:].median())
+df11a = df4.loc[(slice(None),slice('F'), ['STD']),:].fillna(df4.loc[(slice(None),slice('F'), ['STD']),:].median())
+df13a = df4.loc[(slice(None),slice('M'), ['STD']),:].fillna(df4.loc[(slice(None),slice('M'), ['STD']),:].median())
+
+df5ad = df5a.reset_index(level=2, drop=True)
+df7ad = df5a.reset_index(level=2, drop=True)
+df9ad = df5a.reset_index(level=2, drop=True)
+df11ad = df5a.reset_index(level=2, drop=True)
+df13ad = df5a.reset_index(level=2, drop=True)
+df15ad = df7ad*df5ad
+df17ad = df9ad*df5ad
+df19ad = df11ad*df5ad
+df21ad = df13ad*df5ad
+df15ad['Item']='iTFA_int'
+df17ad['Item']='iTFA_int'
+df19ad['Item']='STD_iTFA'
+df21ad['Item']='STD_iTFA'
+df15ad.set_index('Item', append=True, inplace=True)
+df17ad.set_index('Item', append=True, inplace=True)
+df19ad.set_index('Item', append=True, inplace=True)
+df21ad.set_index('Item', append=True, inplace=True)
+df15a = df4.loc[(slice(None),slice('F'), ['iTFA_int']),:].fillna(df15ad)
+df17a = df4.loc[(slice(None),slice('M'), ['iTFA_int']),:].fillna(df17ad)
+df19a = df4.loc[(slice(None),slice('F'), ['STD_iTFA']),:].fillna(df19ad)
+df21a = df4.loc[(slice(None),slice('M'), ['STD_iTFA']),:].fillna(df21ad)
+df16a=df15a.mean()
+df16ab = df16a.to_frame('F_iTFA_intake')
+df18a=df17a.mean()
+df18ab = df18a.to_frame('M_iTFA_intake')
+df20=df19a.mean()
+df20b = df20.to_frame('F_STD_iTFA_intake')
+df22a=df21a.mean()
+df22ab = df22a.to_frame('M_STD_iTFA_intake')
+frame = (df16ab.T, df18ab.T, df20b.T, df22ab.T)
+median = pd.concat(frame)
+medianr = median.round(2)
+
+# #3 mode
+
+df5b = df4.loc[(slice(None),slice(None), ['iTFA_share']),:].fillna(df4.loc[(slice(None),slice(None), ['iTFA_share']),:].mode().iloc[0])
+df6b = df5b.mode()
+df7b = df4.loc[(slice(None),slice('F'), ['TFA']),:].fillna(df4.loc[(slice(None),slice('F'), ['TFA']),:].mode().iloc[0])
+df8b = df7b.mode()
+df9b = df4.loc[(slice(None),slice('M'), ['TFA']),:].fillna(df4.loc[(slice(None),slice('M'), ['TFA']),:].mode().iloc[0])
+df10b = df9b.mode()
+df11b = df4.loc[(slice(None),slice('F'), ['STD']),:].fillna(df4.loc[(slice(None),slice('F'), ['STD']),:].mode().iloc[0])
+df12b = df11b.mode()
+df13b = df4.loc[(slice(None),slice('M'), ['STD']),:].fillna(df4.loc[(slice(None),slice('M'), ['STD']),:].mode().iloc[0])
+df14b = df10b.mode()
+
+df5bd = df5b.reset_index(level=2, drop=True)
+df7bd = df5b.reset_index(level=2, drop=True)
+df9bd = df5b.reset_index(level=2, drop=True)
+df11bd = df5b.reset_index(level=2, drop=True)
+df13bd = df5b.reset_index(level=2, drop=True)
+df15bd = df7bd*df5bd
+df17bd = df9bd*df5bd
+df19bd = df11bd*df5bd
+df21bd = df13bd*df5bd
+df15bd['Item']='iTFA_int'
+df17bd['Item']='iTFA_int'
+df19bd['Item']='STD_iTFA'
+df21bd['Item']='STD_iTFA'
+df15bd.set_index('Item', append=True, inplace=True)
+df17bd.set_index('Item', append=True, inplace=True)
+df19bd.set_index('Item', append=True, inplace=True)
+df21bd.set_index('Item', append=True, inplace=True)
+df15b = df4.loc[(slice(None),slice('F'), ['iTFA_int']),:].fillna(df15bd)
+df17b = df4.loc[(slice(None),slice('M'), ['iTFA_int']),:].fillna(df17bd)
+df19b = df4.loc[(slice(None),slice('F'), ['STD_iTFA']),:].fillna(df19bd)
+df21b = df4.loc[(slice(None),slice('M'), ['STD_iTFA']),:].fillna(df21bd)
+df16b=df15b.mean()
+df16bb = df16b.to_frame('F_iTFA_intake')
+df18b=df17b.mean()
+df18bb = df18b.to_frame('M_iTFA_intake')
+df20b=df19b.mean()
+df20bb = df20b.to_frame('F_STD_iTFA_intake')
+df22b=df21b.mean()
+df22bb = df22b.to_frame('M_STD_iTFA_intake')
+frame = (df16bb.T, df18bb.T, df20bb.T, df22bb.T)
+mode = pd.concat(frame)
+moder = mode.round(2)
+
+# #4 weighted mean
+df23 = df4.loc[(slice(None),slice(None), ['Population']),:]
+df23d = df23.reset_index(level=2, drop=True)
+df24 = df4.loc[(slice(None),slice(None), ['iTFA_share']),:]
+df24d = df24.reset_index(level=2, drop=True).fillna(0)
+df25d = df23d*df24d/(df23d.sum(axis = 0)*df24d)
+df25d['Item']='iTFA_share'
+df25d.set_index('Item', append=True, inplace=True)
+
+df5e = df4.loc[(slice(None),slice(None), ['iTFA_share']),:].fillna(df25d.sum())
+
+df26 = df4.loc[(slice(None),slice('F'), ['Population']),:]
+df26d = df26.reset_index(level=2, drop=True)
+df27 = df4.loc[(slice(None),slice('M'), ['Population']),:]
+df27d = df27.reset_index(level=2, drop=True)
+df28 = df4.loc[(slice(None),slice('F'), ['TFA']),:]
+df28d = df28.reset_index(level=2, drop=True)
+df29 = df4.loc[(slice(None),slice('M'), ['TFA']),:]
+df29d = df29.reset_index(level=2, drop=True)
+df30 = df4.loc[(slice(None),slice('F'), ['STD']),:]
+df30d = df30.reset_index(level=2, drop=True)
+df31 = df4.loc[(slice(None),slice('M'), ['STD']),:]
+df31d = df31.reset_index(level=2, drop=True)
+df32d = df26d*df28d/(df26d.sum(axis = 0)*df28d)
+df32d['Item']='TFA'
+df32d.set_index('Item', append=True, inplace=True)
+df33d = df27d*df29d/(df27d.sum(axis = 0)*df29d)
+df33d['Item']='TFA'
+df33d.set_index('Item', append=True, inplace=True)
+df34d = df26d*df30d/(df26d.sum(axis = 0)*df30d)
+df34d['Item']='STD'
+df34d.set_index('Item', append=True, inplace=True)
+df35d = df27d*df31d/(df27d.sum(axis = 0)*df31d)
+df35d['Item']='STD'
+df35d.set_index('Item', append=True, inplace=True)
+
+df7e = df4.loc[(slice(None),slice('F'), ['TFA']),:].fillna(df32d.sum())
+df9e = df4.loc[(slice(None),slice('M'), ['TFA']),:].fillna(df33d.sum())
+df11e = df4.loc[(slice(None),slice('F'), ['STD']),:].fillna(df34d.sum())
+df13e = df4.loc[(slice(None),slice('M'), ['STD']),:].fillna(df35d.sum())
+df5ed = df5e.reset_index(level=2, drop=True)
+df7ed = df5e.reset_index(level=2, drop=True)
+df9ed = df5e.reset_index(level=2, drop=True)
+df11ed = df5e.reset_index(level=2, drop=True)
+df13ed = df5e.reset_index(level=2, drop=True)
+df15ed = df7ed*df5ed
+df17ed = df9ed*df5ed
+df19ed = df11ed*df5ed
+df21ed = df13ed*df5ed
+df15ed['Item']='iTFA_int'
+df17ed['Item']='iTFA_int'
+df19ed['Item']='STD_iTFA'
+df21ed['Item']='STD_iTFA'
+df15ed.set_index('Item', append=True, inplace=True)
+df17ed.set_index('Item', append=True, inplace=True)
+df19ed.set_index('Item', append=True, inplace=True)
+df21ed.set_index('Item', append=True, inplace=True)
+df15e = df4.loc[(slice(None),slice('F'), ['iTFA_int']),:].fillna(df15ed)
+df17e = df4.loc[(slice(None),slice('M'), ['iTFA_int']),:].fillna(df17ed)
+df19e = df4.loc[(slice(None),slice('F'), ['STD_iTFA']),:].fillna(df19ed)
+df21e = df4.loc[(slice(None),slice('M'), ['STD_iTFA']),:].fillna(df21ed)
+df16e=df15e.mean()
+df16eb = df16e.to_frame('F_iTFA_intake')
+df18e=df17e.mean()
+df18eb = df18e.to_frame('M_iTFA_intake')
+df20e=df19e.mean()
+df20eb = df20e.to_frame('F_STD_iTFA_intake')
+df22e=df21e.mean()
+df22eb = df22e.to_frame('M_STD_iTFA_intake')
+framew = (df16eb.T, df18eb.T, df20eb.T, df22eb.T)
+meanw = pd.concat(framew)
+meanr = mean.round(2)
+
+# 5 mean weighted
+
+df15fd = df7d*df26d*df5d/df26d.sum(axis=0)
+df17fd = df9d*df26d*df5d/df26d.sum(axis=0)
+df19fd = df11d*df26d*df5d/df26d.sum(axis=0)
+df21fd = df13d*df26d*df5d/df26d.sum(axis=0)
+df15fd['Item']='iTFA_int'
+df17fd['Item']='iTFA_int'
+df19fd['Item']='STD_iTFA'
+df21fd['Item']='STD_iTFA'
+df15fd.set_index('Item', append=True, inplace=True)
+df17fd.set_index('Item', append=True, inplace=True)
+df19fd.set_index('Item', append=True, inplace=True)
+df21fd.set_index('Item', append=True, inplace=True)
+df15f = df4.loc[(slice(None),slice('F'), ['iTFA_int']),:].fillna(df15fd.sum())
+df17f = df4.loc[(slice(None),slice('M'), ['iTFA_int']),:].fillna(df17fd.sum())
+df19f = df4.loc[(slice(None),slice('F'), ['STD_iTFA']),:].fillna(df19fd.sum())
+df21f = df4.loc[(slice(None),slice('M'), ['STD_iTFA']),:].fillna(df21fd.sum())
+df16f=df15f.mean()
+df16fb = df16f.to_frame('F_iTFA_intake')
+df18f=df17f.mean()
+df18fb = df18f.to_frame('M_iTFA_intake')
+df20f=df19f.mean()
+df20fb = df20f.to_frame('F_STD_iTFA_intake')
+df22f=df21f.mean()
+df22fb = df22f.to_frame('M_STD_iTFA_intake')
+framewmean = (df16fb.T, df18fb.T, df20fb.T, df22fb.T)
+wmean = pd.concat(framewmean)
+wmeanr = wmean.round(2)
+
+# #6 median weighted
+
+df15gd = df7ad*df26d*df5ad/df26d.sum(axis=0)
+df17gd = df9ad*df26d*df5ad/df26d.sum(axis=0)
+df19gd = df11ad*df26d*df5ad/df26d.sum(axis=0)
+df21gd = df13ad*df26d*df5ad/df26d.sum(axis=0)
+df15gd['Item']='iTFA_int'
+df17gd['Item']='iTFA_int'
+df19gd['Item']='STD_iTFA'
+df21gd['Item']='STD_iTFA'
+df15gd.set_index('Item', append=True, inplace=True)
+df17gd.set_index('Item', append=True, inplace=True)
+df19gd.set_index('Item', append=True, inplace=True)
+df21gd.set_index('Item', append=True, inplace=True)
+df15g = df4.loc[(slice(None),slice('F'), ['iTFA_int']),:].fillna(df15gd.sum())
+df17g = df4.loc[(slice(None),slice('M'), ['iTFA_int']),:].fillna(df17gd.sum())
+df19g = df4.loc[(slice(None),slice('F'), ['STD_iTFA']),:].fillna(df19gd.sum())
+df21g = df4.loc[(slice(None),slice('M'), ['STD_iTFA']),:].fillna(df21gd.sum())
+df16g=df15g.mean()
+df16gb = df16g.to_frame('F_iTFA_intake')
+df18g=df17g.mean()
+df18gb = df18g.to_frame('M_iTFA_intake')
+df20g=df19g.mean()
+df20gb = df20g.to_frame('F_STD_iTFA_intake')
+df22g=df21g.mean()
+df22gb = df22g.to_frame('M_STD_iTFA_intake')
+framewmedian = (df16gb.T, df18gb.T, df20gb.T, df22gb.T)
+wmedian = pd.concat(framewmedian)
+wmedianr = wmedian.round(2)
+
+# #7 mode
+df15hd = df7bd*df26d*df5bd/df26d.sum(axis=0)
+df17hd = df9bd*df26d*df5bd/df26d.sum(axis=0)
+df19hd = df11bd*df26d*df5bd/df26d.sum(axis=0)
+df21hd = df13bd*df26d*df5bd/df26d.sum(axis=0)
+df15hd['Item']='iTFA_int'
+df17hd['Item']='iTFA_int'
+df19hd['Item']='STD_iTFA'
+df21hd['Item']='STD_iTFA'
+df15hd.set_index('Item', append=True, inplace=True)
+df17hd.set_index('Item', append=True, inplace=True)
+df19hd.set_index('Item', append=True, inplace=True)
+df21hd.set_index('Item', append=True, inplace=True)
+df15h = df4.loc[(slice(None),slice('F'), ['iTFA_int']),:].fillna(df15hd.sum())
+df17h = df4.loc[(slice(None),slice('M'), ['iTFA_int']),:].fillna(df17hd.sum())
+df19h = df4.loc[(slice(None),slice('F'), ['STD_iTFA']),:].fillna(df19hd.sum())
+df21h = df4.loc[(slice(None),slice('M'), ['STD_iTFA']),:].fillna(df21hd.sum())
+df16h=df15h.mean()
+df16hb = df16h.to_frame('F_iTFA_intake')
+df18h=df17h.mean()
+df18hb = df18h.to_frame('M_iTFA_intake')
+df20h=df19h.mean()
+df20hb = df20h.to_frame('F_STD_iTFA_intake')
+df22h=df21h.mean()
+df22hb = df22h.to_frame('M_STD_iTFA_intake')
+framewmode = (df16hb.T, df18hb.T, df20hb.T, df22hb.T)
+wmode = pd.concat(framewmode)
+wmoder = wmode.round(2)
+
+# 8 weighted mean weighted
+
+df15id = df7ed*df26d*df5ed/df26d.sum(axis=0)
+df17id = df9ed*df26d*df5ed/df26d.sum(axis=0)
+df19id = df11ed*df26d*df5ed/df26d.sum(axis=0)
+df21id = df13ed*df26d*df5ed/df26d.sum(axis=0)
+df15id['Item']='iTFA_int'
+df17id['Item']='iTFA_int'
+df19id['Item']='STD_iTFA'
+df21id['Item']='STD_iTFA'
+df15id.set_index('Item', append=True, inplace=True)
+df17id.set_index('Item', append=True, inplace=True)
+df19id.set_index('Item', append=True, inplace=True)
+df21id.set_index('Item', append=True, inplace=True)
+df15i = df4.loc[(slice(None),slice('F'), ['iTFA_int']),:].fillna(df15id.sum())
+df17i = df4.loc[(slice(None),slice('M'), ['iTFA_int']),:].fillna(df17id.sum())
+df19i = df4.loc[(slice(None),slice('F'), ['STD_iTFA']),:].fillna(df19id.sum())
+df21i = df4.loc[(slice(None),slice('M'), ['STD_iTFA']),:].fillna(df21id.sum())
+df16i=df15i.mean()
+df16ib = df16i.to_frame('F_iTFA_intake')
+df18i=df17i.mean()
+df18ib = df18i.to_frame('M_iTFA_intake')
+df20i=df19i.mean()
+df20ib = df20i.to_frame('F_STD_iTFA_intake')
+df22i=df21i.mean()
+df22ib = df22i.to_frame('M_STD_iTFA_intake')
+framewwmean = (df16ib.T, df18ib.T, df20ib.T, df22ib.T)
+wwmean = pd.concat(framewwmean)
+wwmeanr = wwmean.round(2)
+
 grouped = df3.groupby('Item')
 
 # This way it is possible to assess the average of the figures proposed
