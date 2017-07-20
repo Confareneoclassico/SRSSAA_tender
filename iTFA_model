@@ -18,19 +18,12 @@ df2 = df[3:20]
 df3 = df2.T
 df4 = df3.sort_index()
 
-df4.loc[(slice(None),slice(None), ['iTFA_share']),:].mean()
-
 # #1 mean
 df5 = df4.loc[(slice(None),slice(None), ['iTFA_share']),:].fillna(df4.loc[(slice(None),slice(None), ['iTFA_share']),:].mean())
-df6 = df5.mean()
 df7 = df4.loc[(slice(None),slice('F'), ['TFA']),:].fillna(df4.loc[(slice(None),slice('F'), ['TFA']),:].mean())
-df8 = df7.mean()
 df9 = df4.loc[(slice(None),slice('M'), ['TFA']),:].fillna(df4.loc[(slice(None),slice('M'), ['TFA']),:].mean())
-df10 = df9.mean()
 df11 = df4.loc[(slice(None),slice('F'), ['STD']),:].fillna(df4.loc[(slice(None),slice('F'), ['STD']),:].mean())
-df12 = df11.mean()
 df13 = df4.loc[(slice(None),slice('M'), ['STD']),:].fillna(df4.loc[(slice(None),slice('M'), ['STD']),:].mean())
-df14 = df10.mean()
 
 df5d = df5.reset_index(level=2, drop=True)
 df7d = df5.reset_index(level=2, drop=True)
@@ -155,13 +148,11 @@ moder = mode.round(2)
 df23 = df4.loc[(slice(None),slice(None), ['Population']),:]
 df23d = df23.reset_index(level=2, drop=True)
 df24 = df4.loc[(slice(None),slice(None), ['iTFA_share']),:]
-df24d = df24.reset_index(level=2, drop=True).fillna(0)
+df24d = df24.reset_index(level=2, drop=True)
 df25d = df23d*df24d/(df23d.sum(axis = 0)*df24d)
 df25d['Item']='iTFA_share'
 df25d.set_index('Item', append=True, inplace=True)
-
 df5e = df4.loc[(slice(None),slice(None), ['iTFA_share']),:].fillna(df25d.sum())
-
 df26 = df4.loc[(slice(None),slice('F'), ['Population']),:]
 df26d = df26.reset_index(level=2, drop=True)
 df27 = df4.loc[(slice(None),slice('M'), ['Population']),:]
@@ -186,7 +177,6 @@ df34d.set_index('Item', append=True, inplace=True)
 df35d = df27d*df31d/(df27d.sum(axis = 0)*df31d)
 df35d['Item']='STD'
 df35d.set_index('Item', append=True, inplace=True)
-
 df7e = df4.loc[(slice(None),slice('F'), ['TFA']),:].fillna(df32d.sum())
 df9e = df4.loc[(slice(None),slice('M'), ['TFA']),:].fillna(df33d.sum())
 df11e = df4.loc[(slice(None),slice('F'), ['STD']),:].fillna(df34d.sum())
@@ -196,6 +186,7 @@ df7ed = df5e.reset_index(level=2, drop=True)
 df9ed = df5e.reset_index(level=2, drop=True)
 df11ed = df5e.reset_index(level=2, drop=True)
 df13ed = df5e.reset_index(level=2, drop=True)
+
 df15ed = df7ed*df5ed
 df17ed = df9ed*df5ed
 df19ed = df11ed*df5ed
@@ -222,7 +213,7 @@ df22e=df21e.mean()
 df22eb = df22e.to_frame('M_STD_iTFA_intake')
 framew = (df16eb.T, df18eb.T, df20eb.T, df22eb.T)
 meanw = pd.concat(framew)
-meanr = mean.round(2)
+meanwr = meanw.round(2)
 
 # 5 mean weighted
 
@@ -340,86 +331,17 @@ df20ib = df20i.to_frame('F_STD_iTFA_intake')
 df22i=df21i.mean()
 df22ib = df22i.to_frame('M_STD_iTFA_intake')
 framewwmean = (df16ib.T, df18ib.T, df20ib.T, df22ib.T)
-wwmean = pd.concat(framewwmean)
-wwmeanr = wwmean.round(2)
+wmeanw = pd.concat(framewwmean)
+wmeanwr = wmeanw.round(2)
 
-grouped = df3.groupby('Item')
-
-# This way it is possible to assess the average of the figures proposed
-df4 = df3.groupby('Item').agg(lambda x: x.sum()/x.count())
-
-# The worksheet contains the figures taken out DK, HU, PL and SK as the data provided for these countries are
-# already to be intended as iTFA. We want to retreive some TFA figures for the various EU countries with this 
-#operation
-
-dg = pd.read_excel('C:/Users/Samuele/Dropbox/ECGC_Barcelona/1.Projects/02-JRC/Work/iTFA best estimate_corrected_20062017.xlsx',\
-sheetname='Cut', parse_cols = 'A:KC', header=None, index_col=0)
-
-dg.columns=pd.MultiIndex.from_arrays(dg[:3].values, names=['Country','Sex','Item'])
-
-# Narrow down to the cells that one will be actually working on
-dg2 = dg[3:20]
-dg3 = dg2.T
-g = dg3.groupby(['Sex','Item'])
-
-#get the average figures for the different quantities and fill the NaN voids:
-b = g.get_group(('F', 'TFA'))
-b2 = b.fillna(b.mean())
-b3 = g.get_group(('M', 'TFA'))
-b4 = b3.fillna(b3.mean())
-b5 = b2.sort_index()
-b6 = b4.sort_index()
-b7 = g.get_group(('F', 'iTFA_share'))
-b8 = b7.fillna(b7.mean())
-b9 = g.get_group(('M', 'iTFA_share'))
-b10 = b9.fillna(b9.mean())
-b11 = b8.sort_index()
-b12 = b10.sort_index()
-b13 = g.get_group(('F', 'STD'))
-b14 = b13.fillna(b13.mean())
-b15 = g.get_group(('M', 'STD'))
-b16 = b15.fillna(b15.mean())
-b17 = b14.sort_index()
-b18 = b16.sort_index()
-frame=(b5, b6, b11, b12, b17, b18)
-result = pd.concat(frame)
-result = result.reset_index(drop=True)
-result = result.T.reset_index(drop = True).T
-a= pd.DataFrame(np.zeros(shape=(96,17)))
-result2 = result.append(a)
-result2 = result2.reset_index(drop = True)
-for col in result2.columns:
-    for row in range (0,48):
-        result2[col][row+144] = result2[col][row] * result2[col][row+48]
-    for row in range (96,144):
-        result2[col][row+96] = result2[col][row] * result2[col][row-48]
-
-#normalize the figures for the population
-result3 = result2.iloc[144:240]
-b19 = g.get_group(('F', 'Population'))
-b20 = g.get_group(('M', 'Population'))
-b21 = b19.sort_index()
-b22 = b20.sort_index()
-b23 = b21.reset_index(drop=True)
-b24 = b22.reset_index(drop=True)
-b25 = b23.T.reset_index(drop=True).T
-b26 = b24.T.reset_index(drop=True).T
-result4 = result3.reset_index(drop=True)
-result5 = result4.append(b25)
-result6 = result5.append(b26)
-result7 = result6.reset_index(drop=True)
-a2= pd.DataFrame(np.zeros(shape=(4,17)), index = (144, 145, 146, 147))
-result8 = result7.append(a2)
-for col in result2.columns:
-    for row in range(0,24):
-        result8[col][144] = sum(result8[col][row] * result8[col][row+96])/sum(result8[col][row+96])
-
-rIndex = pd.MultiIndex(levels=[['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'EE', 'EL', 'ES', 'FI', 'FR', 'HR', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PT', 'RO', 'SE', 'SL', 'UK'], ['F', 'M'], ['iTFA_intake']], \
-labels=[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, \
-9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\
-, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], names=['Country', 'Sex', 'Item'])
-r = pd.DataFrame([], index=rIndex)
-results2 = result.append(r)
-
-#append everything and then take the index out and reintroduce the index when you are done
+# Export the project to an .xls spreadsheet
+writer = pd.ExcelWriter('C:/Users/Samuele/Dropbox/ECGC_Barcelona/1.Projects/02-JRC/Work/iTFA best estimate_corrected_20062017.xlsx')
+meanr.to_excel(writer,'mean')
+medianr.to_excel(writer,'median')
+moder.to_excel(writer,'mode')
+meanwr.to_excel(writer,'mean weighted')
+wmeanr.to_excel(writer,'weighted mean')
+wmedianr.to_excel(writer,'weighted median')
+wmoder.to_excel(writer,'weighted mode')
+wmeanwr.to_excel(writer,'weighted mean weighted')
+writer.save()
