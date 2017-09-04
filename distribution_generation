@@ -1,0 +1,16 @@
+import pandas as pd
+import numpy as np
+import chaospy as cp
+df = pd.read_excel('C:/Users/Samuele/Dropbox/ECGC_Barcelona/1.Projects/02-JRC/Work/iTFA/Parameters_distributions.xlsx')
+df2 = df.sort_values(['Shape'], ascending = True)
+df3 = df2[df2.columns[0:7]]
+df4 = df3.reset_index()
+del df4['index']
+unif = []
+df5 = pd.DataFrame()
+if df4['Shape'].any()=='Uniform':
+    for i1 in df4['Variable'].loc[df4['Shape'] == 'Uniform'].index:
+        unif=cp.Uniform(df4['Min'].loc[df4['Shape'] == 'Uniform'][i1],df4['Max'].loc[df4['Shape'] == 'Uniform'][i1])
+        unifS=unif.sample(10000, rule="S")
+        np.random.shuffle(unifS)
+        df5[i1]=pd.DataFrame(unifS, )
