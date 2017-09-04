@@ -17,3 +17,42 @@ if df4['Shape'].any()=='Uniform':
         sample.append(unifS)
         np.random.shuffle(sample)
         df5 = pd.DataFrame(sample, index=df4['Variable'].loc[df4['Shape'] == 'Uniform'].values)
+df6=df4.loc[2:]
+df7 = df6.sort_values(['Shape'], ascending = False)
+df8 = df7.reset_index()
+del df8['index']
+lognormal = []
+sampleL = []
+if df8['Shape'].any()=='lognormal':
+    for i2 in df8['Variable'].loc[df8['Shape'] == 'lognormal'].index:
+        distL=cp.Lognormal(df8['Mean'].loc[df8['Shape'] == 'lognormal'][i2],df8['Std'].loc[df8['Shape'] == 'lognormal'][i2],0)
+        lognormal.append(distL)
+        lognormalS=lognormal[i2].sample(10000, rule="S")
+        sampleL.append(lognormalS)
+        np.random.shuffle(sampleL)
+    df9 = pd.DataFrame(sampleL, index=df8['Variable'].loc[df8['Shape'] == 'lognormal'].values)
+df10=pd.concat([df5,df9])
+df11=df8.loc[4:]
+df12 = df11.drop([12])
+df13 = df12.sort_values(['Shape'], ascending = False)
+df13 = df12.reset_index()
+df14 = df13.fillna(0)
+del df14['index']
+gamma = []
+sampleG = []
+if df14['Shape'].any()=='gamma':
+    for i3 in df14['Variable'].loc[df14['Shape'] == 'gamma'].index:
+        distG=cp.Gamma((df14['Mean']**2/df14['Std']**2).loc[df14['Shape'] == 'gamma'][i3],(df14['Std']**2/df14['Mean']).loc[df14['Shape'] == 'gamma'][i3],df14['Min'][i3])
+        gamma.append(distG)
+        gammaS=gamma[i3].sample(10000, rule="S")
+        sampleG.append(gammaS)
+        np.random.shuffle(sampleG)
+    df15 = pd.DataFrame(sampleG, index=df14['Variable'].loc[df14['Shape'] == 'gamma'].values)
+if df12['Shape'].any()=='gamma':
+    for i3 in df12['Variable'].loc[df12['Shape'] == 'gamma'].index:
+        distG=cp.Gamma((df12['Mean']**2/df12['Std']**2).loc[df12['Shape'] == 'gamma'][i3],(df12['Std']**2/df12['Mean']).loc[df12['Shape'] == 'gamma'][i3],df12['Min'][i3])
+        gamma.append(distG)
+        gammaS=gamma[i3].sample(10000, rule="S")
+        sampleG.append(gammaS)
+        np.random.shuffle(sampleG)
+    df13 = pd.DataFrame(sampleG, index=df12['Variable'].loc[df12['Shape'] == 'gamma'].values)
