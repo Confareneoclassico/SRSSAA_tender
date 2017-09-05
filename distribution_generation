@@ -1,11 +1,20 @@
+#Classic package imports from the Python libraries
 import pandas as pd
 import numpy as np
 import chaospy as cp
+
+#Select the file we'll be working and manipulate to adjust the format a bit
 df = pd.read_excel('C:/Users/Samuele/Dropbox/ECGC_Barcelona/1.Projects/02-JRC/Work/iTFA/Parameters_distributions.xlsx')
 df2 = df.sort_values(['Shape'], ascending = True)
 df3 = df2[df2.columns[0:7]]
 df4 = df3.reset_index()
 del df4['index']
+
+#I've also included the inflaction and the probability of 2nd CHD attack to complete the assessment
+df4.loc[25]=['Inflation rate', '%', 'normal', 0, 7, 3.5, 3.5]
+df4.loc[26]=['Probability of 2nd CHD attack', '', 'normal', 1, 2, 1.5, 1.5]
+
+#OK, let's start by building the uniform distribution now
 unif = []
 df5 = pd.DataFrame()
 sample = []
@@ -17,21 +26,36 @@ if df4['Shape'].any()=='Uniform':
         np.random.shuffle(unifS)
         sample.append(unifS)
         df5 = pd.DataFrame(sample, index=df4['Variable'].loc[df4['Shape'] == 'Uniform'].values)
+
+#The database is then readjusted and the distributions of different shape are also built 
 df6=df4.loc[2:]
 df7 = df6.sort_values(['Shape'], ascending = False)
 df8 = df7.reset_index()
 del df8['index']
+normal = []
+sampleN = []
+if df8['Shape'].any()=='normal':
+    for i2 in df8['Variable'].loc[df8['Shape'] == 'normal'].index:
+        distN=cp.Truncnorm(df8['Min'].loc[df8['Shape'] == 'normal'][i2],df8['Max'].loc[df8['Shape'] == 'normal'][i2],\
+        df8['Mean'].loc[df8['Shape'] == 'normal'][i2], df8['Std'].loc[df8['Shape'] == 'normal'][i2])                   
+        normal.append(distN)
+        normalS=normal[i2].sample(10000, rule="S")
+        np.random.shuffle(normalS)
+        sampleN.append(normalS)
+    df9 = pd.DataFrame(sampleN, index=df8['Variable'].loc[df8['Shape'] == 'normal'].values)
+df8b=df8.loc[2:].reset_index()
+del df8b['index']
 lognormal = []
 sampleL = []
-if df8['Shape'].any()=='lognormal':
-    for i2 in df8['Variable'].loc[df8['Shape'] == 'lognormal'].index:
-        distL=cp.Lognormal(df8['Mean'].loc[df8['Shape'] == 'lognormal'][i2],df8['Std'].loc[df8['Shape'] == 'lognormal'][i2],0)
+if df8b['Shape'].any()=='lognormal':
+    for i2b in df8b['Variable'].loc[df8b['Shape'] == 'lognormal'].index:
+        distL=cp.Lognormal(df8b['Mean'].loc[df8b['Shape'] == 'lognormal'][i2b],df8b['Std'].loc[df8b['Shape'] == 'lognormal'][i2b],0)
         lognormal.append(distL)
-        lognormalS=lognormal[i2].sample(10000, rule="S")
+        lognormalS=lognormal[i2b].sample(10000, rule="S")
         np.random.shuffle(lognormalS)
         sampleL.append(lognormalS)
-    df9 = pd.DataFrame(sampleL, index=df8['Variable'].loc[df8['Shape'] == 'lognormal'].values)
-df11=df8.loc[4:]
+    df9b = pd.DataFrame(sampleL, index=df8b['Variable'].loc[df8b['Shape'] == 'lognormal'].values)
+df11=df8b.loc[4:]
 df12 = df11.drop([12])
 df13 = df12.sort_values(['Shape'], ascending = False)
 df13 = df12.reset_index()
@@ -48,3 +72,15 @@ if df14['Shape'].any()=='gamma':
         np.random.shuffle(gammaS)
         sampleG.append(gammaS)
     df15 = pd.DataFrame(sampleG, index=df14['Variable'].loc[df14['Shape'] == 'gamma'].values)
+
+# 'Indirect costs CHD' wasn't there as it was no primary parameter, but the sum of sub-parameters so I have dropped it.
+df16 = df15.drop(['Indirect costs CHD'])
+
+# The dataframes built for the different distribution shapes are eventually concatenated
+dfF = pd.concat([df5, df9, df9b, df16])
+
+# And trasposed, 'cause we want a column-parameter correlation
+dfFi = dfF.T
+
+# The result is eventually exported as Excel file
+dfFi.to_excel('C:/Users/Samuele/Dropbox/ECGC_Barcelona/1.Projects/02-JRC/Work/iTFA/Parameters.xlsx')
