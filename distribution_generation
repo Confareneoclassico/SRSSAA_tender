@@ -12,7 +12,8 @@ del df4['index']
 
 #I've also included the inflaction and the probability of 2nd CHD attack to complete the assessment
 df4.loc[25]=['Inflation rate', '%', 'normal', 0, 7, 3.5, 3.5]
-df4.loc[26]=['Probability of 2nd CHD attack', '', 'normal', 1, 2, 1.5, 1.5]
+df4.loc[26]=['Probability of 2nd CHD attack', '', 'lognormal', 1, 2, 1.5, 1.5]
+df4.loc[27]=['Relative Risk', '', 'normal', 1.11, 1.37, 1.23, (1.37-1.11)/1.96]
 
 #OK, let's start by building the uniform distribution now
 unif = []
